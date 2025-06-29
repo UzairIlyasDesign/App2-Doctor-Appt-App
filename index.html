@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthWise Case Study | Uzair Ilyas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <!-- 
+    Chosen Palette: "Cool & Clean"
+    - Primary Blue (#007BFF): Trust & Clarity
+    - Secondary Green (#28A745): Freshness & Calm
+    - Accent Purple (#6F42C1): Sophistication & Impact
+    - Background (#F8F9FA): Soft, near-white cool grey (main page background)
+    - Body Text (#343A40): Deep, cool charcoal
+    - Subtle Text (#6C757D): Medium, cool grey
+    - Default Border (#DEE2E6): Light, subtle cool grey
+    - Hover/Active Border (#ADB5BD): Slightly darker cool grey
+    -->
+    <!-- 
+    Application Structure Plan: 
+    The application is structured as a single-page narrative case study, guiding the viewer through a logical project story (Problem, Solution, Design System, Outcome, Reflections). A sticky header facilitates easy navigation between these key sections. This linear, scrollable format creates a focused, uninterrupted storytelling experience, demonstrating a clear and organized design process. Sections alternate subtle background colors to enhance visual distinction and break monotony.
+    -->
+    <!-- 
+    Visualization & Content Choices:
+    - Key Metrics -> Goal: Compare -> Bar Chart (Chart.js/Canvas) -> To visually represent the projected impact of the design with clear, quantifiable data. Interaction: Tooltips on hover provide exact percentages.
+    - User Personas -> Goal: Inform -> HTML/CSS Cards -> To visually present user archetypes in a structured, digestible format. Interaction: N/A, static presentation.
+    - User Flow -> Goal: Organize -> HTML/CSS Diagram -> To visually map the user's journey, demonstrating logical information architecture without using static images. Interaction: N/A, static presentation.
+    - Design System Components -> Goal: Inform/Demonstrate -> Interactive HTML/CSS UI Elements (Buttons, Inputs, Checkboxes, Radios, Tabs) -> To allow direct interaction with UI elements and showcase their various states, proving the system's robustness and adding a "hands-on" engagement layer.
+    - High-Fidelity Mockups -> Goal: Showcase -> Image Placeholders -> To present the final visual design of key screens, demonstrating the application of the design system.
+    - Interactive Prototype -> Goal: Engage -> Embed Link Placeholder -> To provide a fully interactive experience of the core user flows.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #F8F9FA; /* Main page background */
+            color: #343A40;
+            line-height: 1.6; /* Improved general line height */
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            margin-bottom: 0.75em; /* Spacing below headings */
+            line-height: 1.2; /* Tighter line height for headings */
+        }
+        p {
+            margin-bottom: 1em; /* Spacing below paragraphs */
+        }
+        ul {
+            margin-bottom: 1em; /* Spacing below lists */
+        }
+        blockquote {
+            margin: 1.5em 0; /* Spacing around blockquotes */
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px; 
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        /* Button States for interactive demo */
+        .btn-primary-demo:hover { background-color: #0069D9; }
+        .btn-primary-demo:active { background-color: #0056B3; }
+
+        .btn-secondary-demo:hover { background-color: #E6F0FF; }
+        .btn-secondary-demo:active { background-color: #CCE0FF; border-color: #0069D9; }
+
+        .input-demo:focus { border-color: #007BFF; box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, .25); }
+
+        /* Custom Checkbox/Radio Styling */
+        .custom-checkbox-radio {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 1px solid #6C757D;
+            border-radius: 4px; /* For checkbox */
+            display: inline-block;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.15s ease-in-out;
+        }
+        .custom-radio {
+            border-radius: 50%; /* For radio */
+        }
+        .custom-checkbox-radio:hover {
+            border-color: #007BFF;
+            background-color: #E9F3FF;
+        }
+        .custom-checkbox-radio:checked {
+            background-color: #007BFF;
+            border-color: #007BFF;
+        }
+        .custom-checkbox-radio:checked::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            /* Checkmark for checkbox */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 12.6111L8.92308 17.5L20 6.5' stroke='%23ffffff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-size: 14px 14px;
+            background-repeat: no-repeat;
+            width: 14px;
+            height: 14px;
+        }
+        .custom-radio:checked::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #FFFFFF; /* Inner dot for radio */
+        }
+        .custom-checkbox-radio:disabled {
+            background-color: #E9ECEF;
+            border-color: #ADB5BD;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        .custom-checkbox-radio:checked:disabled {
+            background-color: #B3D7FF;
+            border-color: #B3D7FF;
+        }
+
+        /* Tab Switch Styling */
+        .tab-button {
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+            border-bottom: 2px solid transparent; /* For active indicator */
+            color: #6C757D; /* Inactive text */
+            background-color: transparent;
+        }
+        .tab-button:hover {
+            color: #007BFF; /* Hover text */
+            background-color: #E9F3FF; /* Light hover background */
+        }
+        .tab-button.active {
+            color: #007BFF; /* Active text */
+            border-bottom: 2px solid #007BFF; /* Active indicator */
+            background-color: transparent; /* No background fill for active tab, keep it clean */
+        }
+        .tab-button:disabled {
+            color: #ADB5BD;
+            cursor: not-allowed;
+            background-color: transparent;
+        }
+
+        /* Generic Card Styling */
+        .ui-card {
+            background-color: #FFFFFF;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            border: 1px solid #DEE2E6;
+            box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease-in-out;
+        }
+        .ui-card.hoverable:hover {
+            border-color: #ADB5BD;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+        .ui-card.selectable.active {
+            border: 2px solid #007BFF;
+            background-color: #E6F0FF; /* Light tint for selected state */
+        }
+        .ui-card.disabled {
+            background-color: #F8F9FA;
+            color: #ADB5BD;
+            cursor: not-allowed;
+            opacity: 0.7;
+            box-shadow: none;
+        }
+        /* Custom styles for infographics */
+        .persona-visual {
+            background-color: #F8F9FA;
+            border: 1px solid #DEE2E6;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        .persona-card-visual {
+            background-color: #FFFFFF;
+            border-radius: 0.5rem;
+            border: 1px solid #DEE2E6;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .persona-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background-color: #007BFF;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        .flow-step {
+            background-color: #F8F9FA;
+            border-radius: 0.5rem;
+            border: 1px solid #DEE2E6;
+            padding: 1rem;
+            text-align: center;
+            flex-shrink: 0;
+            min-width: 120px;
+            height: 100px; /* Fixed height for consistency */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .flow-arrow {
+            font-size: 2.5rem;
+            color: #ADB5BD;
+            margin: 0 1rem;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+        }
+        @media (max-width: 767px) {
+            .flow-arrow {
+                transform: rotate(90deg);
+            }
+        }
+        .color-swatch-display {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .color-box {
+            width: 64px;
+            height: 64px;
+            border-radius: 8px;
+            border: 1px solid #DEE2E6;
+            margin-bottom: 0.5rem;
+        }
+        .typography-example {
+            border: 1px solid #DEE2E6;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            background-color: #FFFFFF;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .mockup-frame {
+            /* background-color: #F0F2F5; /* Light grey background for the device frame */
+            border: 1px solid #DEE2E6; */
+            border-radius: 1rem;
+            /* padding: 1rem; */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            /* display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center; */
+            position: relative;
+        }
+        .mockup-screen {
+            /* background: linear-gradient(135deg, #007BFF, #6F42C1); /* Gradient to represent a vibrant screen */
+            /* border: 1px solid #ADB5BD; */
+            border-radius: 0.5rem;
+            /* color: white; */ */
+            /* font-size: 1.1rem;
+            font-weight: 600; */
+            /* display: flex;
+            align-items: center;
+            justify-content: center; */
+            /* text-align: center; */
+            /* padding: 1rem; */
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+            /* position: relative; */
+        }
+        .mobile-mockup .mockup-screen {
+            width: auto;
+            height: auto;
+        }
+        .desktop-mockup .mockup-screen {
+            width: 100%;
+            height: 350px;
+            max-width: 700px;
+        }
+        .comparison-device {
+            background-color: #F8F9FA;
+            border: 1px solid #DEE2E6;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .comparison-screen {
+            background: linear-gradient(to bottom right, #007BFF, #28A745);
+            width: 100%;
+            height: 180px;
+            border-radius: 0.5rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        .comparison-screen.mobile {
+            width: 100px;
+            height: 180px;
+        }
+        .comparison-screen.desktop {
+            width: 250px;
+            height: 180px;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header -->
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 border-b border-[#DEE2E6]">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <!-- VISUAL PLACEHOLDER: Full HealthWise Logo / App Icon -->
+                <!-- Replace this div with your full, polished HealthWise logo (image tag) or a more sophisticated SVG icon -->
+                <div class="w-8 h-8 bg-[#007BFF] rounded-lg flex items-center justify-center">
+                    <span class="text-white font-bold text-lg"><img src="logo.png" alt=""></span>
+                </div>
+                <h1 class="text-xl font-bold text-[#343A40]">HealthWise</h1>
+            </div>
+            <nav class="hidden md:flex space-x-8">
+                <a href="#problem" class="text-[#6C757D] hover:text-[#007BFF] transition-colors duration-300">The Problem</a>
+                <a href="#solution" class="text-[#6C757D] hover:text-[#007BFF] transition-colors duration-300">The Solution</a>
+                <a href="#design" class="text-[#6C757D] hover:text-[#007BFF] transition-colors duration-300">Design System</a>
+                <a href="#mockups" class="text-[#6C757D] hover:text-[#007BFF] transition-colors duration-300">Mockups</a>
+                <a href="#prototype" class="text-[#6C757D] hover:text-[#007BFF] transition-colors duration-300">Prototype</a>
+                <a href="#outcome" class="text-[#6C757D] hover:text-[#007BFF] transition-colors duration-300">Outcome</a>
+                <a href="#reflections" class="text-[#6C757D] hover:text-[#007BFF] transition-colors duration-300">Reflections</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-12">
+
+        <!-- Opener Section -->
+        <section class="text-center mb-24 fade-in">
+            <h1 class="text-4xl md:text-6xl font-bold text-[#343A40] mb-4">No More Doctor Drama</h1>
+            <p class="text-lg md:text-2xl text-[#6C757D] max-w-3xl mx-auto mb-8">Designing peace of mind for healthcare appointments. HealthWise is the empathetic bridge between patients and care—your digital well-being concierge.</p>
+            <div class="mt-8 flex justify-center items-center space-x-4 text-[#6C757D]">
+                <div class="text-center">
+                    <p class="font-semibold text-[#343A40]">My Role</p>
+                    <p class="text-sm leading-tight">Product Designer</p>
+                </div>
+                <div class="border-l h-8 border-[#DEE2E6]"></div>
+                <div class="text-center">
+                    <p class="font-semibold text-[#343A40]">Duration</p>
+                    <p class="text-sm leading-tight">6 Weeks</p>
+                </div>
+                 <div class="border-l h-8 border-[#DEE2E6]"></div>
+                <div class="text-center">
+                    <p class="font-semibold text-[#343A40]">Tools</p>
+                    <p class="text-sm leading-tight">Figma, Miro</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- The Problem -->
+        <section id="problem" class="py-16 fade-in bg-white rounded-xl shadow-lg mb-24">
+            <div class="max-w-4xl mx-auto p-8">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-[#343A40]">The Problem We Dared to Tame</h2>
+                <h3 class="text-2xl font-bold text-[#343A40] mb-4">The Patient's Burden</h3>
+                <p class="text-lg text-[#6C757D] mb-6 leading-relaxed">Finding and managing healthcare often involves phone tag, confusing schedules, and a frustrating lack of clear information. This isn't just inconvenient; it's a significant barrier to timely, essential care that adds unnecessary stress to people's lives, often leading to delayed or missed medical attention.</p>
+                <blockquote class="border-l-4 border-[#007BFF] pl-4 italic text-[#6C757D] my-8 leading-relaxed">
+                    "Why is finding a doctor harder than finding my car keys on a Monday morning? It shouldn't feel like a medical mystery!"
+                </blockquote>
+                <h4 class="text-xl font-semibold text-[#343A40] mb-4">Core Challenges Identified:</h4>
+                <ul class="list-disc list-inside space-y-2 text-[#343A40] mb-6 leading-relaxed">
+                    <li><span class="font-semibold">Opaque Information:</span> Patients struggle to find trustworthy details about doctors, credentials, and available services.</li>
+                    <li><span class="font-semibold">Inflexible Booking:</span> Rigid scheduling systems create high friction, leading to missed appointments and frustration.</li>
+                    <li><span class="font-semibold">Emotional Toll:</span> The sheer administrative burden causes anxiety and disempowerment, actively deterring proactive health management.</li>
+                    <li><span class="font-semibold">Lack of Continuity:</span> Difficulty in managing multiple specialists or follow-up appointments.</li>
+                </ul>
+                <p class="text-lg text-[#6C757D] mt-6 leading-relaxed">Our aim was to simplify this complexity and bring clarity to a process that often feels overwhelming.</p>
+            </div>
+        </section>
+        
+        <!-- User Personas -->
+        <section class="py-16 fade-in mb-24">
+            <div class="max-w-5xl mx-auto">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-[#343A40]">Our Brave Users: Real People, Real Needs</h2>
+                <p class="text-center text-lg text-[#6C757D] mb-12 leading-relaxed">We designed HealthWise for individuals facing common healthcare navigation challenges. Understanding their unique pain points was crucial to building an empathetic and effective solution.</p>
+                
+                <!-- INFOGRAPHIC: User Persona(s) / Archetype Visual -->
+                <div class="persona-visual">
+                    <h3 class="text-2xl font-bold text-[#343A40] text-center mb-4">Key User Archetypes</h3>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="persona-card-visual">
+                            <div class="persona-avatar bg-[#007BFF]">M</div>
+                            <div>
+                                <h4 class="font-semibold text-[#343A40]">Mark, The Time-Pressed Professional</h4>
+                                <p class="text-sm text-[#6C757D]">Primary Goal: Efficient, quick booking & management.</p>
+                                <p class="text-xs text-[#ADB5BD] mt-1">"Every minute counts. I need it done, fast."</p>
+                            </div>
+                        </div>
+                        <div class="persona-card-visual">
+                            <div class="persona-avatar bg-[#28A745]">S</div>
+                            <div>
+                                <h4 class="font-semibold text-[#343A40]">Sarah, The Family Coordinator</h4>
+                                <p class="text-sm text-[#6C757D]">Primary Goal: Centralized family health management.</p>
+                                <p class="text-xs text-[#ADB5BD] mt-1">"Simplify everything for my family's appointments."</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="ui-card">
+                        <h3 class="text-xl font-bold text-[#007BFF] mb-2">Mark, the Med-School Maestro</h3>
+                        <p class="text-sm text-[#6C757D] mb-4">The Busy Professional</p>
+                        <p class="text-[#343A40] mb-4 leading-relaxed">Mark, 35, is a software engineer. His schedule is packed, and every minute counts. He's tired of battling phone trees and inefficient online portals just to book an annual physical or a specialist appointment. He seeks a tool that respects his time, offers clear information quickly, and gets things done without administrative hassle. Mark values efficiency, reliability, and smart digital solutions that integrate seamlessly into his busy life.</p>
+                        <p class="text-sm text-[#6C757D] mt-4 leading-relaxed">"I just want to find a doctor, book it, and get back to work. Is that too much to ask?"</p>
+                    </div>
+                    <div class="ui-card">
+                        <h3 class="text-xl font-bold text-[#28A745] mb-2">Sarah, the Super Mom</h3>
+                        <p class="text-sm text-[#6C757D] mb-4">The Family Health Manager</p>
+                        <p class="text-[#343A40] mb-4 leading-relaxed">Sarah, 42, is a mother of two. She's the chief medical officer of her household, juggling her kids' pediatric visits, her husband's check-ups, and her own specialist appointments. She desperately needs a centralized, intuitive platform to manage multiple family calendars, understand insurance details, and find trusted specialists without guesswork. Clarity, calm, and a single source of truth are paramount for Sarah to reduce her daily stress.</p>
+                        <p class="text-sm text-[#6C757D] mt-4 leading-relaxed">"Keeping track of everyone's appointments feels like a full-time job. I need something that actually simplifies it."</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- The Solution -->
+        <section id="solution" class="py-16 fade-in bg-white rounded-xl shadow-lg mb-24">
+            <div class="max-w-4xl mx-auto p-8">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-[#343A40]">Mapping the Journey to Clarity</h2>
+                 <p class="text-center text-lg text-[#6C757D] mb-12 leading-relaxed">Our goal was to transform this frustrating journey into an intuitive, empowering experience. We architected the app around natural user tasks—Discovery, Action, and Management—to build a seamless flow that guides users with confidence.</p>
+                
+                <!-- INFOGRAPHIC: User Flow Diagram(s) -->
+                <div class="bg-white p-8 rounded-xl shadow-lg border border-[#DEE2E6] mb-12">
+                    <h3 class="text-2xl font-bold text-[#343A40] mb-6 text-center">The Simplified User Flow</h3>
+                    <div class="flex flex-col md:flex-row items-center justify-center space-y-6 md:space-y-0 md:space-x-8">
+                        <div class="flow-step">
+                            <span class="text-4xl">&#x1F50D;</span> <!-- Magnifying Glass Emoji -->
+                            <p class="font-semibold text-lg text-[#343A40]">Discover & Filter</p>
+                            <p class="text-sm text-[#6C757D]">Find relevant care.</p>
+                        </div>
+                        <div class="flow-arrow">&rarr;</div>
+                        <div class="flow-step">
+                            <span class="text-4xl">&#x1F4DD;</span> <!-- Memo/Document Emoji -->
+                            <p class="font-semibold text-lg text-[#343A40]">Review & Book</p>
+                            <p class="text-sm text-[#6C757D]">Confirm appointment.</p>
+                        </div>
+                        <div class="flow-arrow">&rarr;</div>
+                        <div class="flow-step">
+                            <span class="text-4xl">&#x1F4C6;</span> <!-- Calendar Emoji -->
+                            <p class="font-semibold text-lg text-[#343A40]">Manage & Remind</p>
+                            <p class="text-sm text-[#6C757D]">Stay on track.</p>
+                        </div>
+                    </div>
+                    <p class="text-center text-sm text-[#6C757D] mt-6 leading-relaxed">This clear, linear flow eliminates confusion and guides users effortlessly from need to solution.</p>
+                </div>
+
+                <div class="bg-white p-8 rounded-xl shadow-lg border border-[#DEE2E6]">
+                    <h3 class="text-2xl font-bold text-[#343A40] mb-6">The User Flow: A Clear Path to Care</h3>
+                    <div class="flex flex-col md:flex-row items-center justify-center space-y-6 md:space-y-0 md:space-x-8 text-center">
+                        <div class="p-6 bg-[#F8F9FA] rounded-lg shadow-sm border border-[#DEE2E6] flex flex-col items-center justify-center h-32 w-32 md:h-40 md:w-40">
+                            <p class="font-semibold text-lg text-[#343A40]">Find & Filter</p>
+                            <p class="text-sm text-[#6C757D] mt-1">Discovery Phase</p>
+                        </div>
+                        <div class="text-3xl text-[#ADB5BD] font-thin block md:hidden">&darr;</div>
+                        <div class="text-3xl text-[#ADB5BD] font-thin hidden md:block">&rarr;</div>
+                        <div class="p-6 bg-[#F8F9FA] rounded-lg shadow-sm border border-[#DEE2E6] flex flex-col items-center justify-center h-32 w-32 md:h-40 md:w-40">
+                            <p class="font-semibold text-lg text-[#343A40]">Review & Book</p>
+                            <p class="text-sm text-[#6C757D] mt-1">Decision & Action</p>
+                        </div>
+                        <div class="text-3xl text-[#ADB5BD] font-thin block md:hidden">&darr;</div>
+                        <div class="text-3xl text-[#ADB5BD] font-thin hidden md:block">&rarr;</div>
+                        <div class="p-6 bg-[#F8F9FA] rounded-lg shadow-sm border border-[#DEE2E6] flex flex-col items-center justify-center h-32 w-32 md:h-40 md:w-40">
+                            <p class="font-semibold text-lg text-[#343A40]">Manage Appointments</p>
+                            <p class="text-sm text-[#6C757D] mt-1">Ongoing Control</p>
+                        </div>
+                    </div>
+                    <p class="text-center text-sm text-[#6C757D] mt-6 leading-relaxed">This architecture ensures users never feel lost, reinforcing confidence at every step by mirroring their natural thought process.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Wireframing & Prototyping -->
+        <!-- <section id="wireframing" class="py-16 fade-in mb-24">
+            <div class="max-w-5xl mx-auto">
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-[#343A40]">Wireframing & Prototyping: Building the Foundation</h2>
+                <p class="text-center text-lg text-[#6C757D] mb-12 leading-relaxed">Our design process began with low-fidelity wireframes, allowing us to rapidly test core layouts and interactions. Iterative refinement, guided by user feedback, ensured a robust and intuitive structure before moving to high-fidelity designs.</p>
+                 -->
+                <!-- VISUAL PLACEHOLDER: Wireframe Images (kept as placeholder as requested) -->
+                <!-- Insert 2-3 key wireframe images here. These should be clean, annotated wireframes demonstrating the structural decisions. If applicable, include a 'before & after' of a wireframe iteration that highlights a key problem you solved. -->
+                <!-- <div class="bg-gray-200 p-8 rounded-xl shadow-inner text-gray-600 text-center text-xl font-semibold min-h-[400px] flex items-center justify-center mb-12">
+                    [Insert your Wireframe Images Here (Low-Fidelity)]
+                </div>
+                <p class="text-sm text-[#6C757D] text-center leading-relaxed">Low-fidelity wireframes enabled rapid testing of core layouts and interaction patterns, minimizing costly rework in later stages.</p>
+            </div>
+        </section> -->
+
+        <!-- Design System -->
+        <section id="design" class="py-16 fade-in bg-white rounded-xl shadow-lg mb-24">
+             <div class="max-w-4xl mx-auto text-center p-8">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 text-[#343A40]">The Polished Experience: Design System in Action</h2>
+                 <p class="text-lg text-[#6C757D] mb-12 leading-relaxed">A design system isn't just about colors and fonts; it's the DNA of the user experience. We built a comprehensive system that ensures every element is consistent, accessible, and contributes to a feeling of calm and trust, creating a unified and intuitive interface.</p>
+            </div>
+
+            <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-8 px-8 pb-8">
+                <!-- Color & Typography -->
+                <div class="ui-card">
+                    <h3 class="text-2xl font-bold text-[#343A40] mb-6">Visual Language Foundations</h3>
+                    
+                    <!-- INFOGRAPHIC: Color Palette Swatches -->
+                    <h4 class="text-lg font-semibold mb-2 text-[#343A40]">Color Palette: "Cool & Clean"</h4>
+                    <p class="text-sm text-[#6C757D] mb-4 leading-relaxed">A harmonious blend for trust and clarity.</p>
+                    <div class="grid grid-cols-3 sm:grid-cols-5 gap-4 mb-8">
+                        <div class="color-swatch-display">
+                            <div class="color-box bg-[#007BFF]"></div>
+                            <p class="text-xs mt-1 text-[#343A40] font-semibold">Primary Blue</p>
+                            <p class="text-xs text-[#6C757D]">#007BFF</p>
+                        </div>
+                        <div class="color-swatch-display">
+                            <div class="color-box bg-[#28A745]"></div>
+                            <p class="text-xs mt-1 text-[#343A40] font-semibold">Secondary Green</p>
+                            <p class="text-xs text-[#6C757D]">#28A745</p>
+                        </div>
+                        <div class="color-swatch-display">
+                            <div class="color-box bg-[#6F42C1]"></div>
+                            <p class="text-xs mt-1 text-[#343A40] font-semibold">Accent Purple</p>
+                            <p class="text-xs text-[#6C757D]">#6F42C1</p>
+                        </div>
+                         <div class="color-swatch-display">
+                            <div class="color-box bg-[#343A40]"></div>
+                            <p class="text-xs mt-1 text-[#343A40] font-semibold">Dark Neutral</p>
+                            <p class="text-xs text-[#6C757D]">#343A40</p>
+                        </div>
+                         <div class="color-swatch-display">
+                            <div class="color-box bg-[#F8F9FA]"></div>
+                            <p class="text-xs mt-1 text-[#343A40] font-semibold">Light Neutral</p>
+                            <p class="text-xs text-[#6C757D]">#F8F9FA</p>
+                        </div>
+                    </div>
+
+                    <!-- INFOGRAPHIC: Typography Examples -->
+                    <h4 class="text-lg font-semibold mb-2 mt-8 text-[#343A40]">Typography: Clarity & Hierarchy</h4>
+                     <p class="text-sm text-[#6C757D] mb-4 leading-relaxed">Ensuring readability and visual structure for all content elements on the page.</p>
+                    <div class="space-y-4">
+                        <div class="typography-example">
+                            <p class="text-xs text-[#6C757D]">H1 Heading (Montserrat, Bold, 2.25rem)</p>
+                            <h1 class="text-4xl font-bold text-[#343A40]">Page Title Example</h1>
+                        </div>
+                         <div class="typography-example">
+                            <p class="text-xs text-[#6C757D]">Body Text (Open Sans, Regular, 1rem)</p>
+                            <p class="text-base text-[#343A40] leading-relaxed">HealthWise is an empathetic digital platform that transforms healthcare appointments into a clear, calm experience for every user, making complex tasks simple. This text demonstrates primary content readability.</p>
+                        </div>
+                        <div class="typography-example">
+                            <p class="text-xs text-[#6C757D]">Small Text / Caption (Open Sans, Regular, 0.875rem)</p>
+                            <p class="text-sm text-[#6C757D] leading-relaxed">This is a small caption providing additional context or secondary information, designed for quick comprehension and supporting details.</p>
+                        </div>
+                        <div class="typography-example">
+                            <p class="text-xs text-[#6C757D]">Interactive Link (Open Sans, Regular, 1rem)</p>
+                            <a href="#" class="text-base text-[#007BFF] underline hover:text-[#0069D9]">Clickable Link Example</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Components Showcase -->
+                <div class="ui-card">
+                     <h3 class="text-2xl font-bold text-[#343A40] mb-6">Interactive Components</h3>
+                     <p class="text-[#6C757D] mb-6 leading-relaxed">Each component was designed with clear states to provide intuitive feedback. Hover over or click the elements below to see the interaction in action and experience the system's responsiveness.</p>
+                     
+                     <!-- Note: The interactive HTML components below are the actual "showcase" for this section. No additional image placeholder is needed here. -->
+                     <div class="space-y-6">
+                         <!-- Primary Button -->
+                         <div>
+                             <p class="text-sm font-semibold mb-2 text-[#343A40]">Primary Button</p>
+                             <button class="w-full bg-[#007BFF] text-white font-semibold py-3 px-4 rounded-lg shadow-md transition-all duration-150 btn-primary-demo">Book Now</button>
+                         </div>
+                         <!-- Secondary Button -->
+                         <div>
+                             <p class="text-sm font-semibold mb-2 text-[#343A40]">Secondary Button</p>
+                             <button class="w-full bg-transparent text-[#007BFF] font-semibold py-3 px-4 rounded-lg border border-[#007BFF] transition-all duration-150 btn-secondary-demo">Learn More</button>
+                         </div>
+                         <!-- Input Field -->
+                         <div>
+                            <p class="text-sm font-semibold mb-2 text-[#343A40]">Input Field</p>
+                            <input type="text" placeholder="e.g., Dr. Anya Sharma" class="w-full p-3 rounded-lg border border-[#DEE2E6] outline-none transition-all duration-150 input-demo">
+                         </div>
+                         <!-- Checkbox -->
+                         <div>
+                             <p class="text-sm font-semibold mb-2 text-[#343A40]">Checkbox & Radio</p>
+                             <label class="flex items-center space-x-2 mb-2 cursor-pointer">
+                                 <input type="checkbox" class="custom-checkbox-radio">
+                                 <span class="text-[#343A40] leading-tight">Enable Notifications</span>
+                             </label>
+                             <div class="space-y-2">
+                                 <label class="flex items-center space-x-2 cursor-pointer">
+                                     <input type="radio" name="demo-radio-group" class="custom-checkbox-radio custom-radio" value="option1">
+                                     <span class="text-[#343A40] leading-tight">Radio Option One</span>
+                                 </label>
+                                 <label class="flex items-center space-x-2 cursor-pointer">
+                                     <input type="radio" name="demo-radio-group" class="custom-checkbox-radio custom-radio" value="option2">
+                                     <span class="text-[#343A40] leading-tight">Radio Option Two</span>
+                                 </label>
+                                 <label class="flex items-center space-x-2 cursor-pointer">
+                                     <input type="radio" name="demo-radio-group" class="custom-checkbox-radio custom-radio" value="option3" checked>
+                                     <span class="text-[#343A40] leading-tight">Radio Option Three (Selected)</span>
+                                 </label>
+                             </div>
+                         </div>
+                         <!-- Tab Switch -->
+                         <div>
+                             <p class="text-sm font-semibold mb-2 text-[#343A40]">Tab Switch</p>
+                             <div class="flex border-b border-[#DEE2E6]" id="tab-container">
+                                 <button class="tab-button active" data-tab="tab1">Overview</button>
+                                 <button class="tab-button" data-tab="tab2">Services</button>
+                                 <button class="tab-button" data-tab="tab3">Reviews</button>
+                                 <button class="tab-button" data-tab="tab4" disabled>Disabled</button>
+                             </div>
+                         </div>
+                     </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- High-Fidelity Mockups -->
+        <section id="mockups" class="py-16 fade-in mb-24">
+            <div class="max-w-5xl mx-auto text-center">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 text-[#343A40]">High-Fidelity Mockups: Bringing the Vision to Life</h2>
+                <p class="text-lg text-[#6C757D] mb-12 leading-relaxed">Witness the polished user interface where all design elements converge to create a seamless and reassuring healthcare experience. These mockups showcase the application of our "Cool & Clean" design system across key screens.</p>
+                
+                <!-- INFOGRAPHIC: Most Impactful High-Fidelity Screen Mockups -->
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+                    <div class="mockup-frame mobile-mockup">
+                        <div class="mockup-screen"><img src="find doctor.png" alt=""></div>
+                        <!-- <p class="text-sm text-[#6C757D] mt-2">Primary Patient Dashboard</p> -->
+                    </div>
+                    <div class="mockup-frame mobile-mockup">
+                        <div class="mockup-screen"><img src="doctor profile.png" alt=""></div>
+                        <!-- <p class="text-sm text-[#6C757D] mt-2">Filtered Provider List</p> -->
+                    </div>
+                    <div class="mockup-frame mobile-mockup">
+                        <div class="mockup-screen"><img src="review appointment.png" alt=""></div>
+                        <!-- <p class="text-sm text-[#6C757D] mt-2">Appointment Details & Next Steps</p> -->
+                    </div>
+                    <!-- <div class="mockup-frame desktop-mockup lg:col-span-2">
+                        <div class="mockup-screen">Desktop Dashboard Mockup</div>
+                        <p class="text-sm text-[#6C757D] mt-2">Comprehensive Desktop View</p>
+                    </div> -->
+                </div>
+
+                <!-- INFOGRAPHIC: Responsive Screen Comparisons -->
+                <!-- <h3 class="text-2xl font-bold text-[#343A40] mb-8 mt-16">Responsive Design in Action</h3>
+                <div class="flex flex-col md:flex-row items-center justify-center gap-8">
+                    <div class="comparison-device">
+                        <div class="comparison-screen mobile">Mobile View</div>
+                        <p class="text-sm text-[#343A40] font-semibold">Mobile (Portrait)</p>
+                        <p class="text-xs text-[#6C757D]">Stacked, streamlined content</p>
+                    </div> -->
+                    <!-- <div class="text-3xl text-[#ADB5BD] font-thin hidden md:block">&harr;</div> Horizontal arrow for desktop -->
+                    <!-- <div class="text-3xl text-[#ADB5BD] font-thin block md:hidden">&darr;</div> Vertical arrow for mobile -->
+                    <!-- <div class="comparison-device">
+                        <div class="comparison-screen desktop">Desktop View</div>
+                        <p class="text-sm text-[#343A40] font-semibold">Desktop</p>
+                        <p class="text-xs text-[#6C757D]">Multi-column, expanded features</p>
+                    </div>
+                </div>
+                 <p class="text-sm text-[#6C757D] text-center mt-4 leading-relaxed">These visuals demonstrate the meticulous attention to detail and consistent application of the design system for an optimal user experience across all devices.</p>
+            </div> -->
+        </section>
+
+        <!-- Outcome -->
+        <section id="outcome" class="py-16 fade-in mb-24">
+             <div class="max-w-4xl mx-auto text-center">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 text-[#343A40]">The Happy Ending: Outcomes & Future Vision</h2>
+                <p class="text-lg text-[#6C757D] mb-12 leading-relaxed">HealthWise successfully transforms a stressful task into a straightforward, reassuring experience. By focusing on core user needs and leveraging a robust design system, the platform delivers tangible benefits for both patients and the healthcare system, demonstrating clear ROI.</p>
+            </div>
+            <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-8 items-center">
+                <div class="ui-card">
+                    <h3 class="text-xl font-bold text-[#343A40] mb-4">Projected Impact</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <span class="text-[#28A745] font-bold text-2xl mr-3">&#x2197;</span>
+                            <div>
+                                <p class="font-semibold text-[#343A40]">20%+ Increase in Successful Bookings</p>
+                                <p class="text-sm text-[#6C757D] leading-relaxed">A frictionless flow and clear calls-to-action encourage conversion, directly impacting platform growth and patient access.</p>
+                            </div>
+                        </li>
+                         <li class="flex items-start">
+                            <span class="text-red-500 font-bold text-2xl mr-3">&#x2198;</span>
+                            <div>
+                                <p class="font-semibold text-[#343A40]">15% Reduction in No-Shows</p>
+                                <p class="text-sm text-[#6C757D] leading-relaxed">Smart reminders, easy rescheduling, and transparent communication improve patient adherence, benefiting providers by optimizing resources.</p>
+                            </div>
+                        </li>
+                         <li class="flex items-start">
+                            <span class="text-[#28A745] font-bold text-2xl mr-3">&#x2197;</span>
+                            <div>
+                                <p class="font-semibold text-[#343A40]">15% Increase in Repeat Bookings</p>
+                                <p class="text-sm text-[#6C757D] leading-relaxed">A consistently positive and trusted experience fosters strong user loyalty and organic growth through word-of-mouth referrals.</p>
+                            </div>
+                        </li>
+                         <li class="flex items-start">
+                            <span class="text-red-500 font-bold text-2xl mr-3">&#x2198;</span>
+                            <div>
+                                <p class="font-semibold text-[#343A40]">25% Reduction in Search Time</p>
+                                <p class="text-sm text-[#6C757D] leading-relaxed">Intuitive filtering, personalized recommendations, and clear doctor profiles drastically cut down the time users spend searching for the right provider.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="chart-container ui-card p-6">
+                    <h3 class="text-lg font-bold text-center mb-4 text-[#343A40]">Key Performance Indicators</h3>
+                    <canvas id="impactChart"></canvas>
+                    <p class="text-xs text-[#6C757D] text-center mt-4 leading-relaxed">Projected percentage change demonstrating positive impact on user and operational metrics, directly correlating design improvements to business value.</p>
+                </div>
+            </div>
+             <div class="max-w-4xl mx-auto text-center mt-16">
+                 <h3 class="text-2xl font-bold mb-4 text-[#343A40]">Future Vision: Beyond the Horizon</h3>
+                 <p class="text-lg text-[#6C757D] mb-8 leading-relaxed">HealthWise is not just an app; it's the digital backbone for the future of collaborative, intelligent, and human-centric healthcare. Our vision extends to continuously enhancing the patient journey and expanding our ecosystem.</p>
+                 <ul class="list-disc list-inside space-y-2 text-[#343A40] text-left mt-6 max-w-md mx-auto leading-relaxed">
+                    <li><span class="font-semibold">AI-Driven Personalized Recommendations:</span> Leveraging data for intelligent doctor and care pathway suggestions to optimize health outcomes.</li>
+                    <li><span class="font-semibold">Advanced Telemedicine Integration:</span> Seamless virtual consultations directly within the platform for convenient access to care.</li>
+                    <li><span class="font-semibold">'Digital Health Coach' Development:</span> Proactive wellness support and personalized health management tools to empower users.</li>
+                    <li><span class="font-semibold">Expanded Provider Network:</span> Continuously growing reach to offer more diverse and specialized care options to a broader audience.</li>
+                 </ul>
+            </div>
+        </section>
+
+        <!-- The Interactive Experience -->
+        <!-- <section id="prototype" class="py-16 fade-in mb-24"> -->
+            <!-- <div class="max-w-4xl mx-auto text-center">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 text-[#343A40]">The Interactive Experience: Explore the Prototype</h2>
+                <p class="text-lg text-[#6C757D] mb-12 leading-relaxed">Immerse yourself in HealthWise's seamless, reassuring journey. Experience firsthand how thoughtful design transforms digital chaos into profound peace of mind. Click through the embedded prototype below to explore core user flows and appreciate the attention to detail.</p>
+                 -->
+                <!-- PROTOTYPE PLACEHOLDER: EMBEDDED INTERACTIVE PROTOTYPE (kept as placeholder) -->
+                <!-- Please EMBED YOUR INTERACTIVE PROTOTYPE here (e.g., Figma Prototype, Adobe XD Share link, InVision link). Ensure it's easily accessible and responsive. This is your most powerful asset – make it count! Example: <iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="800" height="450" src="YOUR_PROTOTYPE_EMBED_LINK" allowfullscreen></iframe> -->
+                <!-- <div class="bg-gray-200 p-8 rounded-xl shadow-inner text-gray-600 text-center text-xl font-semibold min-h-[450px] flex items-center justify-center mb-12">
+                    [Embed Your Interactive Prototype Here]
+                </div> -->
+
+                <!-- OPTIONAL VISUAL PLACEHOLDER: SHORT GIF/VIDEO CLIPS OF KEY MICRO-INTERACTIONS (kept as placeholder) -->
+                <!-- If you have specific, delightful micro-interactions or animations, insert short, high-quality GIF or Video Clips of these interactions here, with brief annotations. -->
+                <!-- <div class="bg-gray-200 p-8 rounded-xl shadow-inner text-gray-600 text-center text-xl font-semibold min-h-[200px] flex items-center justify-center mt-12">
+                    [Optional: Short GIF/Video Clips of Micro-Interactions]
+                </div>
+                 <p class="text-sm text-[#6C757D] text-center mt-4 leading-relaxed">These interactive elements showcase the fluid and intuitive nature of the HealthWise application, providing a glimpse into the user's journey.</p>
+            </div> -->
+        </section>
+
+        <!-- Reflections -->
+         <section id="reflections" class="py-16 bg-[#E9ECEF] rounded-xl fade-in mb-24">
+            <div class="max-w-4xl mx-auto text-center px-6">
+                <h2 class="text-3xl font-bold text-[#343A40] mb-4">Reflections & Growth: The Designer's Journey</h2>
+                <p class="text-lg text-[#6C757D] mb-8 leading-relaxed">Every project is a learning expedition. HealthWise provided invaluable insights into designing for complex human needs within a critical domain, reinforcing my commitment to user-centered innovation.</p>
+                <div class="text-left space-y-8 text-[#343A40]">
+                    <div>
+                        <h4 class="text-xl font-semibold text-[#343A40] mb-2">Key Learning #1: Emotional Intelligence in Design</h4>
+                        <p class="text-base text-[#6C757D] leading-relaxed">This project profoundly reinforced the critical role of understanding the emotional journey of the user, not just their functional tasks. In healthcare, alleviating anxiety through intuitive design is as vital as functionality itself. True simplicity, born from deep empathy, is often the hardest, most rewarding design challenge.</p>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-semibold text-[#343A40] mb-2">Key Learning #2: The Power of Design Systems</h4>
+                        <p class="text-base text-[#6C757D] leading-relaxed">Meticulous design system documentation proved its incredible strategic power for ensuring consistency, scalability, and accelerating future innovation across the product. It transformed a complex visual language into a coherent, reusable framework, streamlining development and maintaining brand integrity.</p>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-semibold text-[#343A40] mb-2">What I'd Do Differently: Earlier User Engagement</h4>
+                        <p class="text-base text-[#6C757D] leading-relaxed">If I could hop in a design DeLorean, I'd integrate real users even earlier—at the earliest sketching and conceptualization phase. Nothing beats raw, unfiltered feedback when forming core ideas; it saves 'oops' moments, prevents costly rework, and accelerates the path to truly intuitive, market-leading solutions.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-[#DEE2E6] mt-24 bg-white">
+        <div class="container mx-auto px-6 py-8 text-center text-[#6C757D]">
+             <h3 class="text-xl font-bold text-[#343A40] mb-2">Let's Connect!</h3>
+            <p class="mb-4 leading-relaxed">I'm always eager to dive deeper into challenging design problems or share war stories. If you're building the future, let's discuss how my passion for thoughtful, impactful design can contribute to your vision.</p>
+            <div class="flex justify-center space-x-6 text-[#007BFF]">
+                <a href="#" class="hover:underline text-lg">Portfolio</a>
+                <a href="#" class="hover:underline text-lg">LinkedIn</a>
+                <a href="#" class="hover:underline text-lg">Email</a>
+            </div>
+            <p class="text-sm mt-8 leading-relaxed">&copy; 2025 Uzair Ilyas. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+
+    <script>
+        // Chart.js implementation for Impact Chart
+        const ctx = document.getElementById('impactChart').getContext('2d');
+        const impactChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Booking Completions', 'No-Shows', 'Search Time', 'Repeat Bookings'],
+                datasets: [{
+                    label: 'Projected Impact',
+                    data: [20, -15, -25, 15], // Positive for increase, negative for reduction
+                    backgroundColor: [
+                        'rgba(40, 167, 69, 0.7)',  // Secondary Green for positive impact
+                        'rgba(220, 53, 69, 0.7)',  // Standard Error Red for negative impact/reduction
+                        'rgba(220, 53, 69, 0.7)',  // Standard Error Red
+                        'rgba(40, 167, 69, 0.7)'   // Secondary Green
+                    ],
+                    borderColor: [
+                        'rgba(40, 167, 69, 1)',
+                        'rgba(220, 53, 69, 1)',
+                        'rgba(220, 53, 69, 1)',
+                        'rgba(40, 167, 69, 1)'
+                    ],
+                    borderWidth: 1,
+                    barPercentage: 0.7, // Reduce bar width slightly
+                    categoryPercentage: 0.8 // Reduce space between categories
+                }]
+            },
+            options: {
+                indexAxis: 'y', // Horizontal bars
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false // No legend needed
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.parsed.x;
+                                if (context.parsed.x > 0) {
+                                    return `+${label}%`;
+                                } else {
+                                    return `${label}%`;
+                                }
+                            }
+                        },
+                        backgroundColor: '#343A40', // Dark neutral tooltip background
+                        titleColor: '#FFFFFF',
+                        bodyColor: '#FFFFFF',
+                        padding: 10,
+                        cornerRadius: 6,
+                        displayColors: false
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        grid: {
+                            color: '#DEE2E6' // Light grid lines
+                        },
+                        ticks: {
+                            color: '#6C757D' // Subtle tick labels
+                        },
+                        title: {
+                            display: true,
+                            text: 'Percentage Change (%)',
+                            color: '#343A40',
+                            font: {
+                                size: 14,
+                                weight: '600'
+                            }
+                        }
+                    },
+                    y: {
+                        grid: {
+                            display: false // No vertical grid lines
+                        },
+                        ticks: {
+                            color: '#343A40', // Labels for categories
+                            font: {
+                                size: 14
+                            },
+                             // Wrap labels if they are too long
+                            callback: function(value, index, ticks) {
+                                const label = this.getLabelForValue(value);
+                                const maxLen = 16; // Max characters per line
+                                if (label.length > maxLen) {
+                                    return label.split(' ').reduce((acc, word) => {
+                                        if (acc.length === 0 || acc[acc.length - 1].length + word.length + 1 > maxLen) {
+                                            acc.push(word);
+                                        } else {
+                                            acc[acc.length - 1] += ' ' + word;
+                                        }
+                                        return acc;
+                                    }, []);
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Simple scroll fade-in effect
+        const faders = document.querySelectorAll('.fade-in');
+        const appearOptions = {
+            threshold: 0.2,
+            rootMargin: "0px 0px -50px 0px"
+        };
+        const appearOnScroll = new IntersectionObserver(function(entries, appearOnScroll) {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) {
+                    return;
+                } else {
+                    entry.target.classList.add('visible');
+                    appearOnScroll.unobserve(entry.target);
+                }
+            });
+        }, appearOptions);
+
+        faders.forEach(fader => {
+            appearOnScroll.observe(fader);
+        });
+
+        // Smooth scroll for nav links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Interactive Tab Switch Logic
+        const tabContainer = document.getElementById('tab-container');
+        if (tabContainer) {
+            tabContainer.addEventListener('click', function(event) {
+                const clickedButton = event.target.closest('.tab-button');
+                if (clickedButton && !clickedButton.disabled) {
+                    // Remove 'active' class from all buttons
+                    tabContainer.querySelectorAll('.tab-button').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    // Add 'active' class to the clicked button
+                    clickedButton.classList.add('active');
+                    // In a real app, you'd now change the content based on data-tab attribute
+                    console.log('Tab switched to:', clickedButton.dataset.tab);
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>
